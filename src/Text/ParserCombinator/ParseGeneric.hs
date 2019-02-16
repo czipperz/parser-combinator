@@ -16,5 +16,14 @@ tokenSatisfying e f = do
     then return t
     else fail e
 
+tokens :: (Show t, Eq t) => [t] -> Parser t [t]
+tokens xx = tokens' xx
+  where tokens' [] = return []
+        tokens' (x:xs) = do
+          t <- anyToken
+          if t == x
+            then fmap (t:) (tokens' xs)
+            else fail $ show xx
+
 eoi :: Parser t ()
 eoi = maybe (return ()) (const $ fail "Not end of input") =<< consumeToken

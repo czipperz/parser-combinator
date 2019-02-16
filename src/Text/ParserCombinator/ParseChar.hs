@@ -26,8 +26,12 @@ asciiLower = charSatisfying "ascii lower case" isAsciiLower
 asciiUpper = charSatisfying "ascii upper case" isAsciiUpper
 latin1 = charSatisfying "latin1" isLatin1
 
+eol = setErrorMessage "end of line" (string "\n" <|> string "\r\n")
+
 charSatisfying :: String -> (t -> Bool) -> Parser t t
 charSatisfying = tokenSatisfying
+
+string = tokens
 
 anyChar :: Parser t t
 anyChar = anyToken
