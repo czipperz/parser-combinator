@@ -1,9 +1,9 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
-module Parser (Parser, CharParser, consumeToken, many, some) where
+module Text.ParserCombinator.Parser (Parser, CharParser, consumeToken, many, some, (<|>)) where
 
-import ParserImpl
-import Control.Applicative (many, some)
+import Text.ParserCombinator.ParserImpl
+import Control.Applicative (many, some, (<|>))
 
 type CharParser = Parser Char
 

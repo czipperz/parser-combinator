@@ -3,8 +3,8 @@ module ParserTests (parserTests) where
 import TestUtil
 import Test.HUnit
 
-import Lib
-import ParserImpl
+import Text.ParserCombinator
+import Text.ParserCombinator.ParserImpl
 
 import Data.Either (isLeft)
 

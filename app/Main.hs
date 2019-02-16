@@ -1,6 +1,6 @@
 module Main where
 
-import Lib
+import Text.ParserCombinator
 
 main :: IO ()
 main = putStrLn "unimplemented"

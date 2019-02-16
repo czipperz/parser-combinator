@@ -1,6 +1,6 @@
-module ParseGeneric where
+module Text.ParserCombinator.ParseGeneric where
 
-import Parser
+import Text.ParserCombinator.Parser
 
 -- | Consume the next token in the stream, failing on eoi.
 anyToken :: Parser t t

@@ -1,7 +1,7 @@
-module ParseNumber where
+module Text.ParserCombinator.ParseNumber where
 
-import Parser
-import ParseChar
+import Text.ParserCombinator.Parser
+import Text.ParserCombinator.ParseChar
 
 import Text.Read (readEither)
 

@@ -1,6 +1,6 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
-module ParserImpl where
+module Text.ParserCombinator.ParserImpl where
 
 import Control.Applicative (Alternative (..))
 import Control.Monad (ap, liftM)

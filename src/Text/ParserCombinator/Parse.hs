@@ -1,7 +1,7 @@
-module Parse (parse, parseRemainder) where
+module Text.ParserCombinator.Parse (parse, parseRemainder) where
 
-import ParserImpl
-import Pos
+import Text.ParserCombinator.ParserImpl
+import Text.ParserCombinator.Pos
 
 type FileName = String
 

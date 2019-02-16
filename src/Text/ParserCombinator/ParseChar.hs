@@ -1,7 +1,7 @@
-module ParseChar where
+module Text.ParserCombinator.ParseChar where
 
-import Parser
-import ParseGeneric
+import Text.ParserCombinator.Parser
+import Text.ParserCombinator.ParseGeneric
 import Data.Char
 
 control = charSatisfying "control" isControl

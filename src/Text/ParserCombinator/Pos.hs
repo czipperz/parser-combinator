@@ -1,4 +1,4 @@
-module Pos where
+module Text.ParserCombinator.Pos where
 
 data Pos = Pos String Int Int
   deriving (Eq, Show)
