@@ -1,19 +1,21 @@
 {-# LANGUAGE ExistentialQuantification #-}
 
-module Parser (Parser, anyChar, consumeChar, evaluateParser, many, some) where
+module Parser (Parser, CharParser, anyChar, consumeChar, evaluateParser, many, some) where
 
 import ParserImpl
 import Control.Applicative (many, some)
 
+type CharParser = Parser Char
+
 -- | Consume the next char in the stream, failing on eoi.
-anyChar :: Parser Char
+anyChar :: CharParser Char
 anyChar = maybe (fail "End of input") return =<< consumeChar
 
 -- | Consume the next char in the stream, if one exists.
-consumeChar :: Parser (Maybe Char)
+consumeChar :: CharParser (Maybe Char)
 consumeChar = ConsumeChar id
 
-evaluateParser :: Parser a -> String -> Either String (String, a)
+evaluateParser :: CharParser a -> String -> Either String (String, a)
 evaluateParser (Alternate a b) xx =
   case evaluateParser a xx of
     Right x -> Right x

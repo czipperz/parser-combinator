@@ -5,7 +5,7 @@ import ParseChar
 
 import Text.Read (readEither)
 
-int :: Parser Int
+int :: CharParser Int
 int = mread =<< some digit
 
 mread :: (Monad m, Read a) => String -> m a

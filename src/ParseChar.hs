@@ -25,10 +25,10 @@ asciiLower = charSatisfying "ascii lower case" isAsciiLower
 asciiUpper = charSatisfying "ascii upper case" isAsciiUpper
 latin1 = charSatisfying "latin1" isLatin1
 
-satisfies :: (Char -> Bool) -> Parser Char
+satisfies :: (Char -> Bool) -> CharParser Char
 satisfies = charSatisfying "did not satisfy predicate"
 
-charSatisfying :: String -> (Char -> Bool) -> Parser Char
+charSatisfying :: String -> (Char -> Bool) -> CharParser Char
 charSatisfying e f = do
   ch <- anyChar
   if f ch
