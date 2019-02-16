@@ -5,20 +5,20 @@ module ParserImpl where
 import Control.Applicative (Alternative (..))
 import Control.Monad (ap, liftM)
 
-data Parser s a = Alternate (Parser s a) (Parser s a)
-                | forall b. Sequence (Parser s b) (b -> Parser s a)
-                | ConsumeChar (Maybe s -> a)
+data Parser t a = Alternate (Parser t a) (Parser t a)
+                | forall b. Sequence (Parser t b) (b -> Parser t a)
+                | ConsumeChar (Maybe t -> a)
                 | Value a
                 | Fail String
 
-instance Functor (Parser s) where
+instance Functor (Parser t) where
   fmap = liftM
 
-instance Applicative (Parser s) where
+instance Applicative (Parser t) where
   pure = return
   (<*>) = ap
 
-instance Monad (Parser s) where
+instance Monad (Parser t) where
   return = Value
   fail = Fail
 
@@ -28,6 +28,6 @@ instance Monad (Parser s) where
   Value a >>= command = command a
   Fail s >>= _ = Fail s
 
-instance Alternative (Parser s) where
+instance Alternative (Parser t) where
   empty = fail "Empty parser"
   (<|>) = Alternate
