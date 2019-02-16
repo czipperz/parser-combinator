@@ -11,7 +11,8 @@ import Data.Either (isLeft)
 parserTests = [testMakeSequence, parseLetterSuccessful, parseLetterFailure,
                parseManyLettersEntireInput, parseManyLettersStopsCorrectly,
                parseManyLettersWhenNone, parseManyLettersThenNumbers,
-               parseIntSucceeds, parseIntFails]
+               parseIntSucceeds, parseIntFails, parseEoiEmptyString,
+               parseEoiStringBody]
 
 testMakeSequence = assertTest "testMakeSequence" verify sequence
   where sequence = do
@@ -51,3 +52,10 @@ parseIntSucceeds = assertEqTest "parseIntSucceeds" expected actual
 
 parseIntFails = assertBoolTest "parseIntFails" isLeft actual
   where actual = parseRemainder int "*test*" "abc"
+
+parseEoiEmptyString = assertEqTest "parseEoiEmptyString" expected actual
+  where expected = Right ("", ())
+        actual = parseRemainder eoi "*test*" ""
+
+parseEoiStringBody = assertBoolTest "parseEoiStringBody" isLeft actual
+  where actual = parseRemainder eoi "*test*" "abc"

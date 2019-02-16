@@ -15,3 +15,6 @@ tokenSatisfying e f = do
   if f t
     then return t
     else fail e
+
+eoi :: Parser t ()
+eoi = maybe (return ()) (const $ fail "Not end of input") =<< consumeToken

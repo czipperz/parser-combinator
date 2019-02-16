@@ -30,7 +30,9 @@ parse' lastChar pos (Sequence a b) tt = do
 parse' lastChar pos (Consume f) (t:ts) =
   Right ((Just t, maybe pos (incrementPos pos) lastChar),
          (ts, f $ Just t))
-parse' _ pos (Consume _) [] = Left [Tag pos "End of input"]
+parse' lastChar pos (Consume f) [] =
+    Right ((Nothing, maybe pos (incrementPos pos) lastChar),
+           ([], f $ Nothing))
 parse' lastChar pos (Value x) tt = Right ((lastChar, pos), (tt, x))
 parse' _ pos (Fail e) _ = Left [Tag pos e]
 
