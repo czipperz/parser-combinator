@@ -9,4 +9,4 @@ type CharParser = Parser Char
 
 -- | Consume the next token in the stream, if one exists.
 consumeToken :: Parser t (Maybe t)
-consumeToken = ConsumeChar id
+consumeToken = Consume id

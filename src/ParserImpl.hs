@@ -7,7 +7,7 @@ import Control.Monad (ap, liftM)
 
 data Parser t a = Alternate (Parser t a) (Parser t a)
                 | forall b. Sequence (Parser t b) (b -> Parser t a)
-                | ConsumeChar (Maybe t -> a)
+                | Consume (Maybe t -> a)
                 | Value a
                 | Fail String
 
@@ -24,7 +24,7 @@ instance Monad (Parser t) where
 
   Alternate l r >>= command = Alternate (l >>= command) (r >>= command)
   Sequence a b >>= command = Sequence a (fmap (>>= command) b)
-  ConsumeChar f >>= command = Sequence (ConsumeChar f) command
+  Consume f >>= command = Sequence (Consume f) command
   Value a >>= command = command a
   Fail s >>= _ = Fail s
 
