@@ -1,0 +1,17 @@
+module ParseGeneric where
+
+import Parser
+
+-- | Consume the next token in the stream, failing on eoi.
+anyToken :: Parser t t
+anyToken = maybe (fail "End of input") return =<< consumeToken
+
+satisfies :: (t -> Bool) -> Parser t t
+satisfies = tokenSatisfying "did not satisfy predicate"
+
+tokenSatisfying :: String -> (t -> Bool) -> Parser t t
+tokenSatisfying e f = do
+  t <- anyToken
+  if f t
+    then return t
+    else fail e

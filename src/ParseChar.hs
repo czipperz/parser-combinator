@@ -1,6 +1,7 @@
 module ParseChar where
 
 import Parser
+import ParseGeneric
 import Data.Char
 
 control = charSatisfying "control" isControl
@@ -25,12 +26,8 @@ asciiLower = charSatisfying "ascii lower case" isAsciiLower
 asciiUpper = charSatisfying "ascii upper case" isAsciiUpper
 latin1 = charSatisfying "latin1" isLatin1
 
-satisfies :: (Char -> Bool) -> CharParser Char
-satisfies = charSatisfying "did not satisfy predicate"
+charSatisfying :: String -> (t -> Bool) -> Parser t t
+charSatisfying = tokenSatisfying
 
-charSatisfying :: String -> (Char -> Bool) -> CharParser Char
-charSatisfying e f = do
-  ch <- anyChar
-  if f ch
-    then return ch
-    else fail e
+anyChar :: Parser t t
+anyChar = anyToken
