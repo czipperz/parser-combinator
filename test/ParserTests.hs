@@ -23,31 +23,31 @@ testMakeSequence = assertTest "testMakeSequence" verify sequence
 
 parseLetterSuccessful = assertEqTest "parseLetterSuccessful" expected actual
   where expected = Right ("bc", 'a')
-        actual = parse letter "abc"
+        actual = parseRemainder letter "*test*" "abc"
 
 parseLetterFailure = assertBoolTest "parseLetterFailure" isLeft actual
-  where actual = parse letter "123"
+  where actual = parseRemainder letter "*test*" "123"
 
 parseManyLettersEntireInput = assertEqTest "parseManyLettersEntireInput" expected actual
   where expected = Right ("", "abc")
-        actual = parse (many letter) "abc"
+        actual = parseRemainder (many letter) "*test*" "abc"
 
 parseManyLettersStopsCorrectly = assertEqTest "parseManyLettersStopsCorrectly" expected actual
   where expected = Right ("123", "abc")
-        actual = parse (many letter) "abc123"
+        actual = parseRemainder (many letter) "*test*" "abc123"
 
 parseManyLettersWhenNone = assertEqTest "parseManyLettersWhenNone" expected actual
   where expected = Right ("123", "")
-        actual = parse (many letter) "123"
+        actual = parseRemainder (many letter) "*test*" "123"
 
 parseManyLettersThenNumbers = assertEqTest "parseManyLettersThenNumbers" expected actual
   where expected = Right ("abc", ("abc", "123"))
-        actual = parse parser "abc123abc"
+        actual = parseRemainder parser "*test*" "abc123abc"
         parser = (,) <$> many letter <*> many digit
 
 parseIntSucceeds = assertEqTest "parseIntSucceeds" expected actual
   where expected = Right ("", 123)
-        actual = parse int "123"
+        actual = parseRemainder int "*test*" "123"
 
 parseIntFails = assertBoolTest "parseIntFails" isLeft actual
-  where actual = parse int "abc"
+  where actual = parseRemainder int "*test*" "abc"
