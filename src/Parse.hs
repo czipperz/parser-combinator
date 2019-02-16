@@ -27,12 +27,12 @@ parse' lastChar pos (Alternate a b) tt =
 parse' lastChar pos (Sequence a b) tt = do
   ((lastChar', pos'), (tt', x)) <- parse' lastChar pos a tt
   parse' lastChar' pos' (b x) tt'
-parse' lastChar pos (Consume f) (t:ts) =
-  Right ((Just t, maybe pos (incrementPos pos) lastChar),
-         (ts, f $ Just t))
-parse' lastChar pos (Consume f) [] =
-    Right ((Nothing, maybe pos (incrementPos pos) lastChar),
-           ([], f $ Nothing))
+parse' lastChar pos (Consume f) tt =
+  Right ((t, maybe pos (incrementPos pos) lastChar),
+         (ts, f t))
+  where (t, ts) = if null tt
+                  then (Nothing, [])
+                  else (Just $ head tt, tail tt)
 parse' lastChar pos (Value x) tt = Right ((lastChar, pos), (tt, x))
 parse' _ pos (Fail e) _ = Left [Tag pos e]
 
