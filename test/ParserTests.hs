@@ -3,10 +3,8 @@ module ParserTests (parserTests) where
 import TestUtil
 import Test.HUnit
 
-import Parser
+import Lib
 import ParserImpl
-import ParseChar
-import ParseNumber
 
 import Data.Either (isLeft)
 
@@ -25,31 +23,31 @@ testMakeSequence = assertTest "testMakeSequence" verify sequence
 
 parseLetterSuccessful = assertEqTest "parseLetterSuccessful" expected actual
   where expected = Right ("bc", 'a')
-        actual = evaluateParser letter "abc"
+        actual = parse letter "abc"
 
 parseLetterFailure = assertBoolTest "parseLetterFailure" isLeft actual
-  where actual = evaluateParser letter "123"
+  where actual = parse letter "123"
 
 parseManyLettersEntireInput = assertEqTest "parseManyLettersEntireInput" expected actual
   where expected = Right ("", "abc")
-        actual = evaluateParser (many letter) "abc"
+        actual = parse (many letter) "abc"
 
 parseManyLettersStopsCorrectly = assertEqTest "parseManyLettersStopsCorrectly" expected actual
   where expected = Right ("123", "abc")
-        actual = evaluateParser (many letter) "abc123"
+        actual = parse (many letter) "abc123"
 
 parseManyLettersWhenNone = assertEqTest "parseManyLettersWhenNone" expected actual
   where expected = Right ("123", "")
-        actual = evaluateParser (many letter) "123"
+        actual = parse (many letter) "123"
 
 parseManyLettersThenNumbers = assertEqTest "parseManyLettersThenNumbers" expected actual
   where expected = Right ("abc", ("abc", "123"))
-        actual = evaluateParser parser "abc123abc"
+        actual = parse parser "abc123abc"
         parser = (,) <$> many letter <*> many digit
 
 parseIntSucceeds = assertEqTest "parseIntSucceeds" expected actual
   where expected = Right ("", 123)
-        actual = evaluateParser int "123"
+        actual = parse int "123"
 
 parseIntFails = assertBoolTest "parseIntFails" isLeft actual
-  where actual = evaluateParser int "abc"
+  where actual = parse int "abc"
