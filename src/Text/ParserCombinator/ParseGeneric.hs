@@ -4,7 +4,7 @@ import Text.ParserCombinator.Parser
 
 -- | Consume the next token in the stream, failing on eoi.
 anyToken :: Parser t t
-anyToken = maybe (fail "End of input") return =<< consumeToken
+anyToken = maybe (fail "End of input") return =<< maybeToken
 
 satisfies :: (t -> Bool) -> Parser t t
 satisfies = tokenSatisfying "did not satisfy predicate"
@@ -26,4 +26,4 @@ tokens xx = tokens' xx
             else fail $ show xx
 
 eoi :: Parser t ()
-eoi = maybe (return ()) (const $ fail "Not end of input") =<< consumeToken
+eoi = maybe (return ()) (const $ fail "Not end of input") =<< maybeToken
