@@ -1,5 +1,3 @@
-{-# LANGUAGE ExistentialQuantification #-}
-
 module Text.ParserCombinator.Parser (Parser, CharParser, consumeToken, setErrorMessage, many, some, (<|>)) where
 
 import Text.ParserCombinator.ParserImpl
@@ -12,5 +10,4 @@ consumeToken :: Parser t (Maybe t)
 consumeToken = Consume id
 
 setErrorMessage :: String -> Parser t a -> Parser t a
-setErrorMessage message (Fail _) = Fail message
-setErrorMessage _ p = p
+setErrorMessage = WithErrorMessage

@@ -13,7 +13,8 @@ parseRemainder parser fileName = either (Left . mergeErrors) (return . snd) .
                                  parse' Nothing (initialPos fileName) parser
 
 mergeErrors :: [Error] -> String
-mergeErrors _ = ""
+mergeErrors errors = "Input stalled as dead ends reached:" ++ errorStrings ++ "\n"
+  where errorStrings = concatMap (('\n':) . displayTag) errors
 
 type Error = Tag String
 
@@ -35,6 +36,9 @@ parse' lastChar pos (Consume f) tt =
                   else (Just $ head tt, tail tt)
 parse' lastChar pos (Value x) tt = Right ((lastChar, pos), (tt, x))
 parse' _ pos (Fail e) _ = Left [Tag pos e]
+parse' lastChar pos (WithErrorMessage s parser) tt = replaceErrorMessage $ parse' lastChar pos parser tt
+  where replaceErrorMessage (Left _) = Left [Tag pos s]
+        replaceErrorMessage r = r
 
 class Token a where
   -- | Move the position from the beginning of the token to where the

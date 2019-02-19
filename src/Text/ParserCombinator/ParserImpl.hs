@@ -10,6 +10,7 @@ data Parser t a = Alternate (Parser t a) (Parser t a)
                 | Consume (Maybe t -> a)
                 | Value a
                 | Fail String
+                | WithErrorMessage String (Parser t a)
 
 instance Functor (Parser t) where
   fmap = liftM
@@ -27,6 +28,7 @@ instance Monad (Parser t) where
   Consume f >>= command = Sequence (Consume f) command
   Value a >>= command = command a
   Fail s >>= _ = Fail s
+  WithErrorMessage s p >>= f = WithErrorMessage s (p >>= f)
 
 instance Alternative (Parser t) where
   empty = fail "Empty parser"

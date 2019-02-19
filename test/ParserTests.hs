@@ -12,7 +12,7 @@ parserTests = [testMakeSequence, parseLetterSuccessful, parseLetterFailure,
                parseManyLettersEntireInput, parseManyLettersStopsCorrectly,
                parseManyLettersWhenNone, parseManyLettersThenNumbers,
                parseIntSucceeds, parseIntFails, parseEoiEmptyString,
-               parseEoiStringBody]
+               parseEoiStringBody, parseEolMiddleLine, parseEolEndLine]
 
 testMakeSequence = assertTest "testMakeSequence" verify sequence
   where sequence = do
@@ -22,12 +22,14 @@ testMakeSequence = assertTest "testMakeSequence" verify sequence
         verify (Alternate (Value x) (Value y)) = assertEqual "trySequence: Alternate matches" (3, 6) (x, y)
         verify _ = fail "trySequence: Not an alternate"
 
+
 parseLetterSuccessful = assertEqTest "parseLetterSuccessful" expected actual
   where expected = Right ("bc", 'a')
         actual = parseRemainder letter "*test*" "abc"
 
 parseLetterFailure = assertBoolTest "parseLetterFailure" isLeft actual
   where actual = parseRemainder letter "*test*" "123"
+
 
 parseManyLettersEntireInput = assertEqTest "parseManyLettersEntireInput" expected actual
   where expected = Right ("", "abc")
@@ -46,6 +48,7 @@ parseManyLettersThenNumbers = assertEqTest "parseManyLettersThenNumbers" expecte
         actual = parseRemainder parser "*test*" "abc123abc"
         parser = (,) <$> many letter <*> many digit
 
+
 parseIntSucceeds = assertEqTest "parseIntSucceeds" expected actual
   where expected = Right ("", 123)
         actual = parseRemainder int "*test*" "123"
@@ -53,9 +56,19 @@ parseIntSucceeds = assertEqTest "parseIntSucceeds" expected actual
 parseIntFails = assertBoolTest "parseIntFails" isLeft actual
   where actual = parseRemainder int "*test*" "abc"
 
+
 parseEoiEmptyString = assertEqTest "parseEoiEmptyString" expected actual
   where expected = Right ("", ())
         actual = parseRemainder eoi "*test*" ""
 
 parseEoiStringBody = assertBoolTest "parseEoiStringBody" isLeft actual
   where actual = parseRemainder eoi "*test*" "abc"
+
+
+parseEolMiddleLine = assertEqTest "parseEolMiddleLine" expected actual
+  where expected = Left "Input stalled as dead ends reached:\n*test*:1:1:end of line\n"
+        actual = parseRemainder eol "*test*" "abc"
+
+parseEolEndLine = assertEqTest "parseEolEndLine" expected actual
+  where expected = Right ("abc", "\n")
+        actual = parseRemainder eol "*test*" "\nabc"
