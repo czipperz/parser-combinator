@@ -10,7 +10,8 @@ parse fileName parser = fmap snd . parseRemainder fileName parser
 
 parseRemainder :: Token t => Parser t a -> FileName -> [t] -> Either String ([t], a)
 parseRemainder parser fileName = either (Left . mergeErrors) (return . snd) .
-                                 parse' Nothing (initialPos fileName) parser
+                                 parse' pos pos parser
+  where pos = initialPos fileName
 
 mergeErrors :: [Error] -> String
 mergeErrors errors = "Input stalled as dead ends reached:" ++ errorStrings ++ "\n"
@@ -18,35 +19,34 @@ mergeErrors errors = "Input stalled as dead ends reached:" ++ errorStrings ++ "\
 
 type Error = Tag String
 
-parse' :: Token t => Maybe t -> Pos -> Parser t a -> [t] -> Either [Error] ((Maybe t, Pos), ([t], a))
-parse' lastChar pos (Alternate a b) tt =
-  case parse' lastChar pos a tt of
+parse' :: Token t => Pos -> Pos -> Parser t a -> [t] -> Either [Error] ((Pos, Pos), ([t], a))
+parse' previousPos pos (Alternate a b) tt =
+  case parse' previousPos pos a tt of
     Right x -> Right x
-    Left e -> case parse' lastChar pos b tt of
+    Left e -> case parse' previousPos pos b tt of
                 Right x -> Right x
                 Left e' -> Left (e ++ e')
 
-parse' lastChar pos (Sequence a b) tt = do
-  ((lastChar', pos'), (tt', x)) <- parse' lastChar pos a tt
-  parse' lastChar' pos' (b x) tt'
+parse' previousPos pos (Sequence a b) tt = do
+  ((previousPos', pos'), (tt', x)) <- parse' previousPos pos a tt
+  parse' previousPos' pos' (b x) tt'
 
-parse' lastChar pos (Consume f) tt =
-  Right ((t, maybe pos (incrementPos pos) lastChar),
+parse' _ pos (Consume f) tt =
+  Right ((pos, maybe pos (incrementPos pos) t),
          (ts, f t))
   where (t, ts) = if null tt
                   then (Nothing, [])
                   else (Just $ head tt, tail tt)
 
-parse' lastChar pos (Value x) tt = Right ((lastChar, pos), (tt, x))
+parse' previousPos pos (Value x) tt = Right ((previousPos, pos), (tt, x))
 
 parse' _ pos (Fail e) _ = Left [Tag pos e]
 
-parse' lastChar pos (WithErrorMessage s parser) tt =
-  either (const $ Left [Tag pos s]) Right $ parse' lastChar pos parser tt
+parse' previousPos pos (WithErrorMessage s parser) tt =
+  either (const $ Left [Tag pos s]) Right $ parse' previousPos pos parser tt
 
-parse' lastChar pos (GetPosition f) tt =
-  Right ((lastChar, pos),
-         (tt, f $ maybe pos (incrementPos pos) lastChar))
+parse' previousPos pos (GetPosition f) tt =
+  Right ((previousPos, pos), (tt, f pos))
 
 class Token a where
   -- | Move the position from the beginning of the token to where the
