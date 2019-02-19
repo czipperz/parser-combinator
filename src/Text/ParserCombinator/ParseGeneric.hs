@@ -29,6 +29,12 @@ tokens xx = tokens' xx
 eoi :: Parser t ()
 eoi = maybe (return ()) (const $ fail "Not end of input") =<< maybeToken
 
+oneOf :: (Show t, Eq t) => [t] -> Parser t t
+oneOf elems = tokenSatisfying ("one of " ++ show elems) (`elem` elems)
+
+noneOf :: (Show t, Eq t) => [t] -> Parser t t
+noneOf elems = tokenSatisfying ("none of " ++ show elems) (`notElem` elems)
+
 mread :: (Monad m, Read a) => String -> m a
 mread = meither . readEither
 

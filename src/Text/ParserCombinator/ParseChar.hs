@@ -28,6 +28,10 @@ latin1 = charSatisfying "latin1" isLatin1
 
 eol = string "\n" <|> string "\r\n" <?> "end of line"
 
+spaces = many space
+
+char c = charSatisfying (show c) (== c)
+
 charSatisfying :: String -> (t -> Bool) -> Parser t t
 charSatisfying = tokenSatisfying
 
