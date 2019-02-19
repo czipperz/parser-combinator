@@ -31,6 +31,7 @@ eol = setErrorMessage "end of line" (string "\n" <|> string "\r\n")
 charSatisfying :: String -> (t -> Bool) -> Parser t t
 charSatisfying = tokenSatisfying
 
+string :: (Show t, Eq t) => [t] -> Parser t [t]
 string = tokens
 
 anyChar :: Parser t t
