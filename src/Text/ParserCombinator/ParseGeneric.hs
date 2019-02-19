@@ -1,6 +1,7 @@
 module Text.ParserCombinator.ParseGeneric where
 
 import Text.ParserCombinator.Parser
+import Text.Read (readEither)
 
 -- | Consume the next token in the stream, failing on eoi.
 anyToken :: Parser t t
@@ -27,3 +28,9 @@ tokens xx = tokens' xx
 
 eoi :: Parser t ()
 eoi = maybe (return ()) (const $ fail "Not end of input") =<< maybeToken
+
+mread :: (Monad m, Read a) => String -> m a
+mread = meither . readEither
+
+meither :: (Monad m) => Either String a -> m a
+meither = either fail return
