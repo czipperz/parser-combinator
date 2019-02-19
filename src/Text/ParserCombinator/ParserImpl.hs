@@ -2,6 +2,8 @@
 
 module Text.ParserCombinator.ParserImpl where
 
+import Text.ParserCombinator.Pos
+
 import Control.Applicative (Alternative (..))
 import Control.Monad (ap, liftM)
 
@@ -11,6 +13,7 @@ data Parser t a = Alternate (Parser t a) (Parser t a)
                 | Value a
                 | Fail String
                 | WithErrorMessage String (Parser t a)
+                | GetPosition (Pos -> a)
 
 instance Functor (Parser t) where
   fmap = liftM
@@ -29,6 +32,7 @@ instance Monad (Parser t) where
   Value a >>= command = command a
   Fail s >>= _ = Fail s
   WithErrorMessage s p >>= f = WithErrorMessage s (p >>= f)
+  GetPosition f >>= command = Sequence (GetPosition f) command
 
 instance Alternative (Parser t) where
   empty = fail "Empty parser"

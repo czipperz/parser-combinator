@@ -39,6 +39,7 @@ parse' _ pos (Fail e) _ = Left [Tag pos e]
 parse' lastChar pos (WithErrorMessage s parser) tt = replaceErrorMessage $ parse' lastChar pos parser tt
   where replaceErrorMessage (Left _) = Left [Tag pos s]
         replaceErrorMessage r = r
+parse' lastChar pos (GetPosition f) tt = Right ((lastChar, pos), (tt, f pos))
 
 class Token a where
   -- | Move the position from the beginning of the token to where the
