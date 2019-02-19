@@ -25,21 +25,28 @@ parse' lastChar pos (Alternate a b) tt =
     Left e -> case parse' lastChar pos b tt of
                 Right x -> Right x
                 Left e' -> Left (e ++ e')
+
 parse' lastChar pos (Sequence a b) tt = do
   ((lastChar', pos'), (tt', x)) <- parse' lastChar pos a tt
   parse' lastChar' pos' (b x) tt'
+
 parse' lastChar pos (Consume f) tt =
   Right ((t, maybe pos (incrementPos pos) lastChar),
          (ts, f t))
   where (t, ts) = if null tt
                   then (Nothing, [])
                   else (Just $ head tt, tail tt)
+
 parse' lastChar pos (Value x) tt = Right ((lastChar, pos), (tt, x))
+
 parse' _ pos (Fail e) _ = Left [Tag pos e]
-parse' lastChar pos (WithErrorMessage s parser) tt = replaceErrorMessage $ parse' lastChar pos parser tt
-  where replaceErrorMessage (Left _) = Left [Tag pos s]
-        replaceErrorMessage r = r
-parse' lastChar pos (GetPosition f) tt = Right ((lastChar, pos), (tt, f pos))
+
+parse' lastChar pos (WithErrorMessage s parser) tt =
+  either (const $ Left [Tag pos s]) Right $ parse' lastChar pos parser tt
+
+parse' lastChar pos (GetPosition f) tt =
+  Right ((lastChar, pos),
+         (tt, f $ maybe pos (incrementPos pos) lastChar))
 
 class Token a where
   -- | Move the position from the beginning of the token to where the
