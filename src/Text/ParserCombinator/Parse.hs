@@ -15,7 +15,7 @@ parseRemainder parser fileName = either (Left . mergeErrors) (return . snd) .
 
 mergeErrors :: [Error] -> String
 mergeErrors errors = "Input stalled as dead ends reached:" ++ errorStrings ++ "\n"
-  where errorStrings = concatMap (('\n':) . displayTag) errors
+  where errorStrings = concatMap (('\n':) . displayTag) . snd . filterMaximums (pos $ head errors) $ errors
 
 type Error = Tag String
 
@@ -43,10 +43,25 @@ parse' previousPos pos (Value x) tt = Right ((previousPos, pos), (tt, x))
 parse' _ pos (Fail e) _ = Left [Tag pos e]
 
 parse' previousPos pos (WithErrorMessage s parser) tt =
-  either (const $ Left [Tag pos s]) Right $ parse' previousPos pos parser tt
+  either (Left . reduceErrors pos s) Right $ parse' previousPos pos parser tt
 
 parse' previousPos pos (GetPosition f) tt =
   Right ((previousPos, pos), (tt, f pos))
+
+parse' previousPos pos (AssertLookingAt p) tt = do
+  (_, (_, x)) <- parse' previousPos pos p tt
+  return ((previousPos, pos), (tt, x))
+
+reduceErrors position s errors =
+  if all ((==) (pos $ head errors) . pos) errors
+  then [Tag position s]
+  else map (fmap (\x -> s ++ " (" ++ x ++ ")")) . snd $ filterMaximums (pos $ head errors) errors
+
+filterMaximums m [] = (m, [])
+filterMaximums m (x:xs) = (m', xx')
+  where mx = max m (pos x)
+        (m', xs') = filterMaximums mx xs
+        xx' = if pos x < m' then xs' else (x:xs')
 
 class Token a where
   -- | Move the position from the beginning of the token to where the

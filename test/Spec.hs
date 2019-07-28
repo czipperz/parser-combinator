@@ -2,8 +2,9 @@ import Test.HUnit
 import System.Exit (exitWith, ExitCode (ExitFailure))
 import Control.Monad (when)
 import ParserTests
+import BasicSchemeParserTests
 
-tests = concat [parserTests]
+tests = concat [parserTests, basicSchemeParserTests]
 
 main :: IO ()
 main = do

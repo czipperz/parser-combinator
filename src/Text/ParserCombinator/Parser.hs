@@ -1,4 +1,5 @@
-module Text.ParserCombinator.Parser (Parser, CharParser, maybeToken, getPosition, (<?>), many, some, (<|>)) where
+module Text.ParserCombinator.Parser (Parser, CharParser, maybeToken, getPosition, (<?>), named,
+                                     assertLookingAt, many, some, (<|>)) where
 
 import Text.ParserCombinator.ParserImpl
 import Text.ParserCombinator.Pos
@@ -17,3 +18,9 @@ getPosition = GetPosition id
 infixl 2 <?>
 (<?>) :: Parser t a -> String -> Parser t a
 (<?>) = flip WithErrorMessage
+
+named :: String -> Parser t a -> Parser t a
+named = flip (<?>)
+
+assertLookingAt :: String -> Parser t a -> Parser t a
+assertLookingAt s p = AssertLookingAt p <?> s

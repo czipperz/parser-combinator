@@ -28,7 +28,7 @@ latin1 = charSatisfying "latin1" isLatin1
 
 eol = string "\n" <|> string "\r\n" <?> "end of line"
 
-spaces = many space
+spaces = many space <?> "spaces"
 
 char c = charSatisfying (show c) (== c)
 
